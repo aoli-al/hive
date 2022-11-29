@@ -1709,6 +1709,7 @@
         </executions>
         <configuration>
           <excludes>
+            <exclude>.java-version</exclude>
             <exclude>*.patch</exclude>
             <exclude>.github/**</exclude>
             <exclude>binary-package-licenses/**</exclude>

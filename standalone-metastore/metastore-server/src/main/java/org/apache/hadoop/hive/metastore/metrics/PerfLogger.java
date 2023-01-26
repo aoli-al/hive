@@ -23,8 +23,11 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * PerfLogger.
@@ -180,12 +183,17 @@ public class PerfLogger {
   public ImmutableMap<String, Long> getEndTimes() {
     return ImmutableMap.copyOf(endTimes);
   }
+  public Set<String> startTimers = new HashSet<>();
 
   // Methods for metrics integration.  Each thread-local PerfLogger will open/close scope during each perf-log method.
   private transient Map<String, Timer.Context> timerContexts = new HashMap<>();
   private transient Timer.Context totalApiCallsTimerContext = null;
 
   private void beginMetrics(String method) {
+    if (startTimers.contains(method)) {
+      throw new RuntimeException("Scope named " + method + " is not closed!");
+    }
+    startTimers.add(method);
     Timer timer = Metrics.getOrCreateTimer(MetricsConstants.API_PREFIX + method);
     if (timer != null) {
       timerContexts.put(method, timer.time());
@@ -197,6 +205,7 @@ public class PerfLogger {
   }
 
   private void endMetrics(String method) {
+    startTimers.remove(method);
     Timer.Context context = timerContexts.remove(method);
     if (context != null) {
       context.close();

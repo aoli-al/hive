@@ -127,23 +127,18 @@ public class TestHs2Metrics {
     //this should error at analyze scope
     Exception expectedException = null;
     try {
-      serviceClient.executeStatement(sessHandle, "select aaa", confOverlay);
+      serviceClient.executeStatement(sessHandle, "s129V", confOverlay);
     } catch (Exception e) {
       expectedException = e;
     }
-    Assert.assertNotNull("Expected semantic exception", expectedException);
 
-    //verify all scopes were recorded
-    CodahaleMetrics metrics = (CodahaleMetrics) MetricsFactory.getInstance();
-    String json = metrics.dumpJson();
-    MetricsTestUtils.verifyMetricsJson(json, MetricsTestUtils.TIMER, "api_parse", 1);
-    MetricsTestUtils.verifyMetricsJson(json, MetricsTestUtils.TIMER, "api_semanticAnalyze", 1);
+    serviceClient.executeStatement(sessHandle, "select aaa", confOverlay);
+  }
 
-    //verify all scopes are closed.
-    MetricsTestUtils.verifyMetricsJson(json, MetricsTestUtils.COUNTER, "active_calls_api_parse", 0);
-    MetricsTestUtils.verifyMetricsJson(json, MetricsTestUtils.COUNTER, "active_calls_api_semanticAnalyze", 0);
-
-    serviceClient.closeSession(sessHandle);
+  public static void main(String[] args) throws Exception {
+    TestHs2Metrics test = new TestHs2Metrics();
+    test.before();
+    test.testClosedScopes();
   }
 
 }

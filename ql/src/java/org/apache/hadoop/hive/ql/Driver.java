@@ -231,7 +231,7 @@ public class Driver implements IDriver {
       driverState.executionFinishedWithLocking(isFinishedWithError);
     }
 
-    SessionState.getPerfLogger().cleanupPerfLogMetrics();
+//    SessionState.getPerfLogger().cleanupPerfLogMetrics();
   }
 
   /**

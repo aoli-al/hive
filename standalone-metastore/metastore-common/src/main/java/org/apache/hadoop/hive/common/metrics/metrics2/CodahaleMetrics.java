@@ -123,6 +123,7 @@ public class CodahaleMetrics implements org.apache.hadoop.hive.common.metrics.co
         CodahaleMetrics.this.incrementCounter(MetricsConstant.ACTIVE_CALLS + name);
       } else {
         LOGGER.warn("Scope named " + name + " is not closed, cannot be opened.");
+        throw new RuntimeException("cannot open scope");
       }
     }
 

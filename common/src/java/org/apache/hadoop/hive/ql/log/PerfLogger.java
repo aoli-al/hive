@@ -225,8 +225,9 @@ public class PerfLogger {
   private void beginMetrics(String method) {
     Metrics metrics = MetricsFactory.getInstance();
     if (metrics != null) {
-      MetricsScope scope = metrics.createScope(MetricsConstant.API_PREFIX + method);
-      openScopes.put(method, scope);
+      metrics.startStoredScope(method);
+//      MetricsScope scope = metrics.createScope(MetricsConstant.API_PREFIX + method);
+//      openScopes.put(method, scope);
     }
 
   }
@@ -234,10 +235,11 @@ public class PerfLogger {
   private void endMetrics(String method) {
     Metrics metrics = MetricsFactory.getInstance();
     if (metrics != null) {
-      MetricsScope scope = openScopes.remove(method);
-      if (scope != null) {
-        metrics.endScope(scope);
-      }
+      metrics.endStoredScope(method);
+//      MetricsScope scope = openScopes.remove(method);
+//      if (scope != null) {
+//        metrics.endScope(scope);
+//      }
     }
   }
 

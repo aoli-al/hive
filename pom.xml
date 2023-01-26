@@ -53,6 +53,7 @@
     <module>llap-ext-client</module>
     <module>llap-tez</module>
     <module>llap-server</module>
+    <module>itests</module>
     <module>shims</module>
     <module>kudu-handler</module>
     <module>testutils</module>

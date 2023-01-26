@@ -170,7 +170,7 @@ public final class DriverUtils {
 
   public static CommandProcessorException createProcessorException(DriverContext driverContext, int ret,
       String errorMessage, String sqlState, Throwable downstreamError) {
-    SessionState.getPerfLogger().cleanupPerfLogMetrics();
+//    SessionState.getPerfLogger().cleanupPerfLogMetrics();
     driverContext.getQueryDisplay().setErrorMessage(errorMessage);
     if (downstreamError != null && downstreamError instanceof HiveException) {
       ErrorMsg em = ((HiveException)downstreamError).getCanonicalErrorMsg();

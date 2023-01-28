@@ -136,6 +136,7 @@ public class TestHs2Metrics {
   }
 
   public static void main(String[] args) throws Exception {
+    TestHs2Metrics.setup();
     TestHs2Metrics test = new TestHs2Metrics();
     test.before();
     test.testClosedScopes();

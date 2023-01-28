@@ -2069,26 +2069,11 @@ public class HiveConf extends Configuration {
         "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
         "The default SerDe Hive will use for storage formats that do not specify a SerDe."),
 
-    /**
-     * @deprecated Use MetastoreConf.SERDES_USING_METASTORE_FOR_SCHEMA
-     */
-    @Deprecated
-    SERDESUSINGMETASTOREFORSCHEMA("hive.serdes.using.metastore.for.schema",
-        "org.apache.hadoop.hive.ql.io.orc.OrcSerde," +
-        "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe," +
-        "org.apache.hadoop.hive.serde2.columnar.ColumnarSerDe," +
-        "org.apache.hadoop.hive.serde2.MetadataTypedColumnsetSerDe," +
-        "org.apache.hadoop.hive.serde2.columnar.LazyBinaryColumnarSerDe," +
-        "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe," +
-        "org.apache.hadoop.hive.serde2.lazybinary.LazyBinarySerDe," +
-        "org.apache.hadoop.hive.serde2.OpenCSVSerde",
-        "SerDes retrieving schema from metastore. This is an internal parameter."),
-
     @Deprecated
     HIVE_LEGACY_SCHEMA_FOR_ALL_SERDES("hive.legacy.schema.for.all.serdes",
         false,
         "A backward compatibility setting for external metastore users that do not handle \n" +
-        SERDESUSINGMETASTOREFORSCHEMA.varname + " correctly. This may be removed at any time."),
+        " correctly. This may be removed at any time."),
 
     HIVEHISTORYFILELOC("hive.querylog.location",
         "${system:java.io.tmpdir}" + File.separator + "${system:user.name}",
@@ -2810,12 +2795,6 @@ public class HiveConf extends Configuration {
         "This is useful to identify how tables are accessed and to determine if there are wasted columns that can be trimmed."),
     HIVE_STATS_NDV_ALGO("hive.stats.ndv.algo", "hll", new PatternSet("hll", "fm"),
         "hll and fm stand for HyperLogLog and FM-sketch, respectively for computing ndv."),
-    /**
-     * @deprecated Use MetastoreConf.STATS_FETCH_BITVECTOR
-     */
-    @Deprecated
-    HIVE_STATS_FETCH_BITVECTOR("hive.stats.fetch.bitvector", false,
-        "Whether we fetch bitvector when we compute ndv. Users can turn it off if they want to use old schema"),
     // standard error allowed for ndv estimates for FM-sketch. A lower value indicates higher accuracy and a
     // higher compute cost.
     HIVE_STATS_NDV_ERROR("hive.stats.ndv.error", (float)20.0,
@@ -3085,44 +3064,6 @@ public class HiveConf extends Configuration {
         "If enabled, rename for transactional tables will not rename the partition directory,\n" +
         "rather create a copy of it under the new path.\")"),
     
-    // Configs having to do with DeltaFilesMetricReporter, which collects lists of most recently active tables
-    // with the most number of active/obsolete deltas.
-    /**
-     * @deprecated use MetastoreConf.METASTORE_DELTAMETRICS_MAX_CACHE_SIZE
-     */
-    @Deprecated
-    HIVE_TXN_ACID_METRICS_MAX_CACHE_SIZE("hive.txn.acid.metrics.max.cache.size", 100,
-        new RangeValidator(0, 500),
-        "Size of the ACID metrics cache, i.e. max number of partitions and unpartitioned tables with the "
-            + "most deltas that will be included in the lists of active, obsolete and small deltas. "
-            + "Allowed range is 0 to 500."),
-    /**
-     * @deprecated use MetastoreConf.METASTORE_DELTAMETRICS_REPORTING_INTERVAL
-     */
-    @Deprecated
-    HIVE_TXN_ACID_METRICS_REPORTING_INTERVAL("hive.txn.acid.metrics.reporting.interval", "30s",
-        new TimeValidator(TimeUnit.SECONDS),
-        "Reporting period for ACID metrics in seconds."),
-    /**
-     * @deprecated use MetastoreConf.METASTORE_DELTAMETRICS_DELTA_NUM_THRESHOLD
-     */
-    @Deprecated
-    HIVE_TXN_ACID_METRICS_DELTA_NUM_THRESHOLD("hive.txn.acid.metrics.delta.num.threshold", 100,
-        "The minimum number of active delta files a table/partition must have in order to be included in the ACID metrics report."),
-    /**
-     * @deprecated use MetastoreConf.METASTORE_DELTAMETRICS_OBSOLETE_DELTA_NUM_THRESHOLD
-     */
-    @Deprecated
-    HIVE_TXN_ACID_METRICS_OBSOLETE_DELTA_NUM_THRESHOLD("hive.txn.acid.metrics.obsolete.delta.num.threshold", 100,
-        "The minimum number of obsolete delta files a table/partition must have in order to be included in the ACID metrics report."),
-    /**
-     * @deprecated use MetastoreConf.METASTORE_DELTAMETRICS_DELTA_PCT_THRESHOLD
-     */
-    @Deprecated
-    HIVE_TXN_ACID_METRICS_DELTA_PCT_THRESHOLD("hive.txn.acid.metrics.delta.pct.threshold", 0.01f,
-        "Percentage (fractional) size of the delta files relative to the base directory. Deltas smaller than this threshold " +
-        "count as small deltas. Default 0.01 = 1%.)"),
-
     /**
      * @deprecated Use MetastoreConf.TXN_TIMEOUT
      */
@@ -3180,29 +3121,6 @@ public class HiveConf extends Configuration {
         "For example: Can't serialize.*,40001$,^Deadlock,.*ORA-08176.*\n" +
         "The string that the regex will be matched against is of the following form, where ex is a SQLException:\n" +
         "ex.getMessage() + \" (SQLState=\" + ex.getSQLState() + \", ErrorCode=\" + ex.getErrorCode() + \")\""),
-    /**
-     * @deprecated Use MetastoreConf.COMPACTOR_INITIATOR_ON
-     */
-    @Deprecated
-    HIVE_COMPACTOR_INITIATOR_ON("hive.compactor.initiator.on", false,
-        "Whether to run the initiator and cleaner threads on this metastore instance or not.\n" +
-        "Set this to true on one instance of the Thrift metastore service as part of turning\n" +
-        "on Hive transactions. For a complete list of parameters required for turning on\n" +
-        "transactions, see hive.txn.manager."),
-    /**
-     * @deprecated Use MetastoreConf.COMPACTOR_WORKER_THREADS
-     */
-    @Deprecated
-    HIVE_COMPACTOR_WORKER_THREADS("hive.compactor.worker.threads", 0,
-        "How many compactor worker threads to run on this metastore instance. Set this to a\n" +
-        "positive number on one or more instances of the Thrift metastore service as part of\n" +
-        "turning on Hive transactions. For a complete list of parameters required for turning\n" +
-        "on transactions, see hive.txn.manager.\n" +
-        "Worker threads spawn MapReduce jobs to do compactions. They do not do the compactions\n" +
-        "themselves. Increasing the number of worker threads will decrease the time it takes\n" +
-        "tables or partitions to be compacted once they are determined to need compaction.\n" +
-        "It will also increase the background load on the Hadoop cluster as more MapReduce jobs\n" +
-        "will be running in the background."),
 
     HIVE_COMPACTOR_WORKER_TIMEOUT("hive.compactor.worker.timeout", "86400s",
         new TimeValidator(TimeUnit.SECONDS),

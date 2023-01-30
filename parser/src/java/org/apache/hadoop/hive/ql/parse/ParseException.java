@@ -42,7 +42,8 @@ public class ParseException extends Exception {
       if (sb.length() > 0) {
         sb.append('\n');
       }
-      sb.append(err.getMessage());
+      sb.append(new ParseError(err.getBaseRecognizer(), err.getRecognitionException(), HiveParser.tokenNames));
+//      sb.append(err.getMessage());
     }
 
     return sb.toString();

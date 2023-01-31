@@ -31,8 +31,13 @@ def build():
             cwd=os.path.join(DIR, "itests", "hive-unit"))
 
 
-def find_deps():
-    return list(glob.glob(f"{ORIGIN_JAR_PATH}/*.jar"))
+def find_deps(base_path: str):
+    result = []
+    for f in glob.glob(f"{ORIGIN_JAR_PATH}/*.jar"):
+        name = f.split("/")[-1]
+        result.append(os.path.join(base_path, name))
+    return result
+        
 
 
 def post():
@@ -73,7 +78,7 @@ def origin(debug: bool):
             "--add-opens", "java.base/java.lang=ALL-UNNAMED",
             "--add-opens", "java.base/java.nio=ALL-UNNAMED",
             "-cp", 
-            f"itests/hive-unit/target/testconf:conf:" + ":".join(find_deps()), 
+            f"itests/hive-unit/target/testconf:conf:" + ":".join(find_deps(ORIGIN_JAR_PATH)), 
             TEST_CLASS]
     if debug:
         command.insert(0, "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
@@ -122,8 +127,8 @@ def dynamic(debug: bool):
             "--add-opens", "java.base/java.nio=ALL-UNNAMED",
             f"-DPhosphor.INSTRUMENTATION_CLASSPATH={INSTRUMENTATION_CLASSPATH}",
             f"-DPhosphor.ORIGIN_CLASSPATH={ORIGIN_CLASSPATH}",
-            "-cp", 
-            f"itests/hive-unit/target/testconf:conf:" + ":".join(find_deps()).replace(ORIGIN_CLASSPATH, INSTRUMENTATION_FOLDER_NAME), 
+            "-cp",
+            f"itests/hive-unit/target/testconf:conf:" + ":".join(find_deps(INSTRUMENTATION_FOLDER_NAME)),
             f"-javaagent:{PHOSPHOR_AGENT_PATH}=taintTagFactory=al.aoli.exchain.phophor.instrument.DynamicSwitchTaintTagFactory"
             ",postClassVisitor=al.aoli.exchain.phosphor.instrumenter.splitter.MethodSplitPostCV"
             ",priorClassVisitor=al.aoli.exchain.phosphor.instrumenter.splitter.MethodSplitPreCV",

@@ -129,7 +129,7 @@ def dynamic(debug: bool):
             f"-DPhosphor.ORIGIN_CLASSPATH={ORIGIN_CLASSPATH}",
             "-cp",
             f"itests/hive-unit/target/testconf:conf:" + ":".join(find_deps(INSTRUMENTATION_FOLDER_NAME)),
-            f"-javaagent:{PHOSPHOR_AGENT_PATH}=taintTagFactory=al.aoli.exchain.phophor.instrument.DynamicSwitchTaintTagFactory"
+            f"-javaagent:{PHOSPHOR_AGENT_PATH}=taintTagFactory=al.aoli.exchain.phosphor.instrumenter.DynamicSwitchTaintTagFactory"
             ",postClassVisitor=al.aoli.exchain.phosphor.instrumenter.splitter.MethodSplitPostCV"
             ",priorClassVisitor=al.aoli.exchain.phosphor.instrumenter.splitter.MethodSplitPreCV",
             f"-javaagent:{RUNTIME_JAR_PATH}=dynamic:{INSTRUMENTATION_CLASSPATH}",

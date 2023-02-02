@@ -25,9 +25,9 @@ ARGS = "-Dbuild.dir=/home/aoli/repos/exchain/applications/hive-13410/itests/hive
 @main.command(name="build")
 def build():
     subprocess.call("jenv local 11", shell=True)
-    subprocess.call(["mvn", "install", "-DskipTests", 
+    subprocess.call(["mvn", "install", "-DskipTests",
         "-Dmaven.javadoc.skip=true", "-Drat.skip=true"], cwd=DIR)
-    subprocess.call("mvn dependency:copy-dependencies -DoutputDirectory=target/lib", shell=True, 
+    subprocess.call("mvn dependency:copy-dependencies -DoutputDirectory=target/lib", shell=True,
             cwd=os.path.join(DIR, "itests", "hive-unit"))
 
 
@@ -37,12 +37,12 @@ def find_deps(base_path: str):
         name = f.split("/")[-1]
         result.append(os.path.join(base_path, name))
     return result
-        
+
 
 
 def post():
     time.sleep(10)
-    
+
 
 @main.command(name="instrument")
 def instrument():
@@ -77,8 +77,8 @@ def origin(debug: bool):
             "--add-opens", "java.base/java.net=ALL-UNNAMED",
             "--add-opens", "java.base/java.lang=ALL-UNNAMED",
             "--add-opens", "java.base/java.nio=ALL-UNNAMED",
-            "-cp", 
-            f"itests/hive-unit/target/testconf:conf:" + ":".join(find_deps(ORIGIN_JAR_PATH)), 
+            "-cp",
+            f"itests/hive-unit/target/testconf:conf:" + ":".join(find_deps(ORIGIN_JAR_PATH)),
             TEST_CLASS]
     if debug:
         command.insert(0, "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
@@ -95,7 +95,7 @@ def static():
                      TEST_CLASS])
     args = ["./gradlew", "static-analyzer:run", f"--args={ORIGIN_CLASSPATH} {DIR}/static-results {ORIGIN_CLASSPATH}"]
     print(args)
-    cmd = run_command(args, cwd=os.path.join(DIR, "../.."))
+    subprocess.call(args, cwd=os.path.join(DIR, "../.."))
     post()
 
 

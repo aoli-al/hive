@@ -453,7 +453,7 @@ public class Driver implements IDriver {
     if (metrics != null) {
       metrics.incrementCounter(MetricsConstant.WAITING_COMPILE_OPS, 1);
     }
-    PerfLogger perfLogger = SessionState.getPerfLogger(true);
+    PerfLogger perfLogger = SessionState.getPerfLogger();
     perfLogger.perfLogBegin(CLASS_NAME, PerfLogger.WAIT_COMPILE);
 
     try (CompileLock compileLock = CompileLockFactory.newInstance(driverContext.getConf(), command)) {

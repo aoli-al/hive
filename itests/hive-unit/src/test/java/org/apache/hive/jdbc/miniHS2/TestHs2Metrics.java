@@ -88,6 +88,8 @@ public class TestHs2Metrics {
 ////    confOverlay.put(HiveConf.ConfVars.SEMANTIC_ANALYZER_HOOK.varname, MetricCheckingHook.class.getName());
 //    confOverlay.put(HiveConf.ConfVars.HIVE_SERVER2_METRICS_ENABLED.varname, "true");
     confOverlay.put(HiveConf.ConfVars.HIVE_SUPPORT_CONCURRENCY.varname, "false");
+    confOverlay.put(HiveConf.ConfVars.HIVE_SERVER2_ENABLE_DOAS.varname, "false");
+//    confOverlay.put(HiveConf.ConfVars.HIVEPA/**/H)
     miniHS2.start(confOverlay);
   }
 
@@ -139,7 +141,8 @@ public class TestHs2Metrics {
       serviceClient.executeStatement(sessHandle, "s129V", confOverlay);
     } catch (Exception e) {
     }
-
+    for (int i = 0; i < Integer.getInteger("exchain.iter", 10); i++) {
+      final int j = i;
       Thread myThread = new Thread() {
         public void run() {
           try {
@@ -156,12 +159,12 @@ public class TestHs2Metrics {
             }
             if (client != null) {
               SessionHandle handle2 = client.openSession("123", "456");
-              String tableName = "TestHiveServer2TestConnection";
-              client.executeStatement(handle2, "DROP TABLE IF EXISTS " + tableName, confOverlay);
+              String tableName = "TestHiveServer2TestConnection" + j;
+//              client.executeStatement(handle2, "DROP TABLE IF EXISTS " + tableName, confOverlay);
               client.executeStatement(handle2, "CREATE TABLE " + tableName + " (id INT)", confOverlay);
               OperationHandle opHandle = client.executeStatement(handle2, "SHOW TABLES", confOverlay);
               RowSet rowSet = client.fetchResults(opHandle);
-              client.executeStatement(handle2, "DROP TABLE IF EXISTS " + tableName, confOverlay);
+//              client.executeStatement(handle2, "DROP TABLE IF EXISTS " + tableName, confOverlay);
               client.closeSession(handle2);
             }
           } catch (Exception e) {
@@ -172,8 +175,7 @@ public class TestHs2Metrics {
       myThread.start();
       myThread.join();
 
-      Thread.sleep(60 * 1000);
-//    Thread.sleep(30 * 1000);
+    }
 
     serviceClient.executeStatement(sessHandle, "select aaa", confOverlay);
   }

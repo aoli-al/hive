@@ -69,7 +69,7 @@ public class MiniHS2 extends AbstractHiveService {
   private static final String driverName = "org.apache.hive.jdbc.HiveDriver";
   private static final FsPermission FULL_PERM = new FsPermission((short)00777);
   private static final FsPermission WRITE_ALL_PERM = new FsPermission((short)00733);
-  private static final String tmpDir = System.getProperty("test.tmp.dir");
+  private static final String tmpDir = System.getProperty("test.tmp.dir", "/tmp/hive/out_dir/db");
   private static final int DEFAULT_DATANODE_COUNT = 4;
   public HiveServer2 hiveServer2 = null;
   private final File baseDir;

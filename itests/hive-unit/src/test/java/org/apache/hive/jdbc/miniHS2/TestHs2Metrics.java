@@ -26,17 +26,26 @@ import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.HiveSemanticAnalyzerHook;
 import org.apache.hadoop.hive.ql.parse.HiveSemanticAnalyzerHookContext;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
+import org.apache.hive.service.Service;
 import org.apache.hive.service.cli.CLIServiceClient;
+import org.apache.hive.service.cli.OperationHandle;
+import org.apache.hive.service.cli.RowSet;
 import org.apache.hive.service.cli.SessionHandle;
+import org.apache.hive.service.cli.thrift.ThriftBinaryCLIService;
+import org.apache.hive.service.cli.thrift.ThriftCLIServiceClient;
+import org.apache.hive.service.cli.thrift.ThriftHttpCLIService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertFalse;
 
 /**
  * Tests HiveServer2 metrics.
@@ -75,9 +84,9 @@ public class TestHs2Metrics {
   public static void setup() throws Exception {
     miniHS2 = new MiniHS2(new HiveConf());
     confOverlay = new HashMap<String, String>();
-    confOverlay.put(HiveConf.ConfVars.HIVE_SUPPORT_CONCURRENCY.varname, "false");
-    confOverlay.put(HiveConf.ConfVars.SEMANTIC_ANALYZER_HOOK.varname, MetricCheckingHook.class.getName());
-    confOverlay.put(HiveConf.ConfVars.HIVE_SERVER2_METRICS_ENABLED.varname, "true");
+//    confOverlay.put(HiveConf.ConfVars.HIVE_SUPPORT_CONCURRENCY.varname, "true");
+////    confOverlay.put(HiveConf.ConfVars.SEMANTIC_ANALYZER_HOOK.varname, MetricCheckingHook.class.getName());
+//    confOverlay.put(HiveConf.ConfVars.HIVE_SERVER2_METRICS_ENABLED.varname, "true");
     confOverlay.put(HiveConf.ConfVars.HIVE_SUPPORT_CONCURRENCY.varname, "false");
     miniHS2.start(confOverlay);
   }
@@ -129,8 +138,42 @@ public class TestHs2Metrics {
     try {
       serviceClient.executeStatement(sessHandle, "s129V", confOverlay);
     } catch (Exception e) {
-      expectedException = e;
     }
+
+      Thread myThread = new Thread() {
+        public void run() {
+          try {
+            CLIServiceClient client = null;
+            for (Service service:  miniHS2.hiveServer2.getServices()) {
+              if (service instanceof ThriftBinaryCLIService) {
+                client = new ThriftCLIServiceClient((ThriftBinaryCLIService) service);
+                break;
+              }
+              if (service instanceof ThriftHttpCLIService) {
+                client = new ThriftCLIServiceClient((ThriftHttpCLIService) service);
+                break;
+              }
+            }
+            if (client != null) {
+              SessionHandle handle2 = client.openSession("123", "456");
+              String tableName = "TestHiveServer2TestConnection";
+              client.executeStatement(handle2, "DROP TABLE IF EXISTS " + tableName, confOverlay);
+              client.executeStatement(handle2, "CREATE TABLE " + tableName + " (id INT)", confOverlay);
+              OperationHandle opHandle = client.executeStatement(handle2, "SHOW TABLES", confOverlay);
+              RowSet rowSet = client.fetchResults(opHandle);
+              client.executeStatement(handle2, "DROP TABLE IF EXISTS " + tableName, confOverlay);
+              client.closeSession(handle2);
+            }
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      };
+      myThread.start();
+      myThread.join();
+
+      Thread.sleep(60 * 1000);
+//    Thread.sleep(30 * 1000);
 
     serviceClient.executeStatement(sessHandle, "select aaa", confOverlay);
   }

@@ -582,6 +582,7 @@ class DriverTxnHandler {
     driverContext.getConf().unset(ValidTxnList.VALID_TXNS_KEY);
     driverContext.getConf().unset(ValidTxnWriteIdList.VALID_TABLES_WRITEIDS_KEY);
     if (!DriverUtils.checkConcurrency(driverContext)) {
+      perfLogger.perfLogEnd(CLASS_NAME, PerfLogger.RELEASE_LOCKS);
       return;
     }
 

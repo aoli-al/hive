@@ -71,7 +71,7 @@ public class MiniHS2 extends AbstractHiveService {
   private static final FsPermission WRITE_ALL_PERM = new FsPermission((short)00733);
   private static final String tmpDir = System.getProperty("test.tmp.dir");
   private static final int DEFAULT_DATANODE_COUNT = 4;
-  private HiveServer2 hiveServer2 = null;
+  public HiveServer2 hiveServer2 = null;
   private final File baseDir;
   private final Path baseFsDir;
   private MiniMrShim mr;

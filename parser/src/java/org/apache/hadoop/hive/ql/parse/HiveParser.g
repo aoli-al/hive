@@ -529,7 +529,8 @@ import org.apache.hadoop.hive.conf.HiveConf;
   Stack msgs = new Stack<String>();
 
   private static HashMap<String, String> xlateMap;
-  static {
+
+  public static void xlateMapInit() {
     //this is used to support auto completion in CLI
     xlateMap = new HashMap<String, String>();
 
@@ -751,6 +752,11 @@ import org.apache.hadoop.hive.conf.HiveConf;
     xlateMap.put("BITWISEOR", "|");
     xlateMap.put("BITWISEXOR", "^");
     xlateMap.put("CharSetLiteral", "\\'");
+  }
+
+
+  static {
+    xlateMapInit();
   }
 
   public static Collection<String> getKeywords() {

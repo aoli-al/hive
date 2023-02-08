@@ -39,6 +39,7 @@
     <module>jdbc-handler</module>
     <module>hcatalog</module>
     <module>hplsql</module>
+    <module>itests</module>
     <module>jdbc</module>
     <module>metastore</module>
     <module>parser</module>

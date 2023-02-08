@@ -25,3 +25,6 @@ kafka-handler/src/test/gen
 **/.vscode/
 /.recommenders/
 dependency-reduced-pom.xml
+
+derby.log
+metastore_db/

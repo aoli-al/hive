@@ -160,11 +160,11 @@ public class TestHs2Metrics {
             if (client != null) {
               SessionHandle handle2 = client.openSession("123", "456");
               String tableName = "TestHiveServer2TestConnection" + j;
-//              client.executeStatement(handle2, "DROP TABLE IF EXISTS " + tableName, confOverlay);
+              client.executeStatement(handle2, "DROP TABLE IF EXISTS " + tableName, confOverlay);
               client.executeStatement(handle2, "CREATE TABLE " + tableName + " (id INT)", confOverlay);
               OperationHandle opHandle = client.executeStatement(handle2, "SHOW TABLES", confOverlay);
               RowSet rowSet = client.fetchResults(opHandle);
-//              client.executeStatement(handle2, "DROP TABLE IF EXISTS " + tableName, confOverlay);
+              client.executeStatement(handle2, "DROP TABLE IF EXISTS " + tableName, confOverlay);
               client.closeSession(handle2);
             }
           } catch (Exception e) {

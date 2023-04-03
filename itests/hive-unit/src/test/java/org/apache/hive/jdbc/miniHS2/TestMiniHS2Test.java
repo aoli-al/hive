@@ -34,7 +34,7 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TestMiniHS2 {
+public class TestMiniHS2Test {
 
   private MiniHS2 miniHS2;
 
